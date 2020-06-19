@@ -1,0 +1,21 @@
+{
+  "name": "rumur/wp-scheduling",
+  "description": "The OOP package to work with WordPress cron",
+  "keywords": ["wordpress", "cron"],
+  "homepage": "https://github.com/rumur/wp-scheduling",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "rumur",
+      "email": "rumur.dev@gmail.com"
+    }
+  ],
+  "autoload" : {
+    "psr-4" : {
+      "Rumur\\WordPress\\Scheduling\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.1.0"
+  }
+}
