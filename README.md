@@ -1,4 +1,5 @@
-# `wp-scheduling` it's a package that provides a convenient way of working with a [WordPress Cron] (https://developer.wordpress.org/plugins/cron/) functionality.
+# `wp-scheduling` 
+it's a package that provides a convenient way of working with a [WordPress Cron](https://developer.wordpress.org/plugins/cron/) functionality.
 
 ## Package Installation  
 ```composer require rumur/wp-scheduling```  
