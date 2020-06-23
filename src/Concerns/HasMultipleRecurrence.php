@@ -20,6 +20,11 @@ trait HasMultipleRecurrence
             $this->registry->scheduleRecurrence($this->task, $timestamp ?: $this->interval->now(), $interval);
         }
 
+        // Adds a hook name for a task if was registered with.
+        if (! $this->task->name()) {
+            $this->task->useName($this->registry->recurrentActionName());
+        }
+
         return $this->resolveTask();
     }
 

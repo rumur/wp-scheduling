@@ -24,6 +24,11 @@ trait HasSingleRecurrence
             $this->registry->scheduleSingular($this->task, $calculated);
         }
 
+        // Adds a hook name for a task if was registered with.
+        if (! $this->task->name()) {
+            $this->task->useName($this->registry->singularActionName());
+        }
+
         return $this->resolveTask();
     }
 
