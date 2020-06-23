@@ -46,21 +46,33 @@ class HelloDolly
 <?php
 
 // You can add a class as a Job.
-\Rumur\WordPress\Scheduling\Schedule::job(new App\Scheduling\HelloDolly('Lorem impsum'))
-    // You can add args for the task, all these args will be injected to the `handle` method 
-    ->with([ 
-        'id' => 2020, 
-        //...
-    ])
-    ->onSuccess(static function() {
-        // Do something when the task is run successfully.
-    })->onFailure(static function() {
-        // Do something when the task is failed.
-    })->onceInFiveMinutes()
-       // To ping a url when the task is failed.
-      ->pingOnFailure('https://domain.com/?ping=true&id=3790a0e1-3f51-4703-8962-8ed889e2cc7c&action=failed')
-       // To ping a url when the task is successfully performed.
-      ->pingOnSuccess('https://domain.com/?ping=true&id=3790a0e1-3f51-4703-8962-8ed889e2cc7c&action=success');
+\Rumur\WordPress\Scheduling\Schedule::job(
+    new App\Scheduling\HelloDolly('Lorem impsum')
+)
+// You can add args for the task, all these args will be injected to the `handle` method 
+->with([ 
+    'id' => 2020, 
+    //...
+])
+    
+// You can add callbacks that will be executed when the task successfully performed.
+->onSuccess(static function() {
+    // Do something when the task is run successfully.
+})
+
+// You can add callbacks that will be executed when the task encounters an error.
+->onFailure(static function() {
+    // Do something when the task is failed.
+})
+
+// To ping a url when the task is failed.
+->pingOnFailure('https://domain.com/?ping=true&id=3790a0e1-3f51-4703-8962-8ed889e2cc7c&action=failed')
+
+// To ping a url when the task is successfully performed.
+->pingOnSuccess('https://domain.com/?ping=true&id=3790a0e1-3f51-4703-8962-8ed889e2cc7c&action=success')
+
+// Register the recurrence for a task.
+->runOnceInFiveMinutes();
 ```
 
 ### Task as a `Closure`, the `call` method takes any `callable` instance.
@@ -74,45 +86,49 @@ class HelloDolly
 })->onFailure(static function ($task, $args, $reason) {
     // Do something when the task is failed.
 })
+
 // You can add args for the task
 ->with([ 'id' => 2020, /*...*/ ])
+
 // You can ping a url when the task is failed.
 ->pingOnFailure('https://domain.com/?ping=true&id=3790a0e1-3f51-4703-8962-8ed889e2cc7c&action=failed')
+
 // You can ping a url when the task is successfully performed.
 ->pingOnSuccess('https://domain.com/?ping=true&id=3790a0e1-3f51-4703-8962-8ed889e2cc7c&action=success')
-// Adds a recurrence into WordPress
-->everyThirtyMinutes()
-// Or you can run the task straight away, just to test it, if you need it.  
-->now();
+
+// Register the recurrence for a task and returns the configured task. 
+->runEveryThirtyMinutes();
 ```
  
 ### [Available recurrence](#available-recurrence)
+Note that these methods should be the last one in the chain, because it registers all options that was build for a task.
  
- | Method                        | Description                                                  |
- |----------------------------   |------------------------------------------------------------  |
- | `->everyMinute();`            | Run the task every minute                                    |
- | `->everyFiveMinutes();`       | Run the task every five minutes                              |
- | `->everyTenMinutes();`        | Run the task every ten minutes                               |
- | `->everyFifteenMinutes();`    | Run the task every fifteen minutes                           |
- | `->everyThirtyMinutes();`     | Run the task every thirty minutes                            |
- | `->hourly();`                 | Run the task every hour                                      |
- | `->daily();`                  | Run the task every day                                       |
- | `->weekly();`                 | Run the task every week                                      |
- | `->monthly();`                | Run the task every month                                     |
- | `->quarterly();`              | Run the task every quarter                                   |
- | `->yearly();`                 | Run the task every year                                      |
- | `->onceInMinute();`           | Run the task only once in minute                             |
- | `->onceInMinutes(45);`        | Run the task only once in 45 minutes                         |
- | `->onceInFiveMinutes();`      | Run the task only once in 5 minutes                          |
- | `->onceInTenMinutes();`       | Run the task only once in 10 minutes                         |
- | `->onceInFifteenMinutes();`   | Run the task only once in 15 minutes                         |
- | `->onceInThirtyMinutes();`    | Run the task only once in 30 minutes                         |
- | `->onceInHour();`             | Run the task only once in one hour                           |
- | `->onceInDay();`              | Run the task only once in one day                            |
- | `->onceInWeek();`             | Run the task only once in one week                           |
- | `->onceInMonth();`            | Run the task only once in one month                          |
- | `->onceInQuarter();`          | Run the task only once in a quarter                          |
- | `->onceInYear();`             | Run the task only once in a year                             |
+ | Recurrence                       | Description                                                              |
+ |-------------------------------   |------------------------------------------------------------------------  |
+ | `->runEveryMinute();`            | Register the task to run every minute                                    |
+ | `->runEveryFiveMinutes();`       | Register the task to run every five minutes                              |
+ | `->runEveryTenMinutes();`        | Register the task to run every ten minutes                               |
+ | `->runEveryFifteenMinutes();`    | Register the task to run every fifteen minutes                           |
+ | `->runEveryThirtyMinutes();`     | Register the task to run every thirty minutes                            |
+ | `->runHourly();`                 | Register the task to run every hour                                      |
+ | `->runDaily();`                  | Register the task to run every day                                       |
+ | `->runWeekly();`                 | Register the task to run every week                                      |
+ | `->runMonthly();`                | Register the task to run every month                                     |
+ | `->runQuarterly();`              | Register the task to run every quarter                                   |
+ | `->runYearly();`                 | Register the task to run every year                                      |
+ | `->runOnceInMinute();`           | Register the task to run only once in minute                             |
+ | `->runOnceInMinutes(45);`        | Register the task to run only once in 45 minutes                         |
+ | `->runOnceInFiveMinutes();`      | Register the task to run only once in 5 minutes                          |
+ | `->runOnceInTenMinutes();`       | Register the task to run only once in 10 minutes                         |
+ | `->runOnceInFifteenMinutes();`   | Register the task to run only once in 15 minutes                         |
+ | `->runOnceInThirtyMinutes();`    | Register the task to run only once in 30 minutes                         |
+ | `->runOnceInHour();`             | Register the task to run only once in one hour                           |
+ | `->runOnceInDay();`              | Register the task to run only once in one day                            |
+ | `->runOnceInWeek();`             | Register the task to run only once in one week                           |
+ | `->runOnceInMonth();`            | Register the task to run only once in one month                          |
+ | `->runOnceInQuarter();`          | Register the task to run only once in a quarter                          |
+ | `->runOnceInYear();`             | Register the task to run only once in a year                             |
+ | `->runNow();`                    | Runs the task right now. The method mimics WordPress behavior, designed for a testing purpose. |
  
  ### [Available methods](#available-methods)
  
