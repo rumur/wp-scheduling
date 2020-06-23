@@ -33,7 +33,7 @@ trait HasSingleRecurrence
      * @param int $min How many minutes before performing a task.
      * @return CronTask
      */
-    public function runOnceInMinutes($min): CronTask
+    public function runOnceInMinutes(int $min): CronTask
     {
         return $this->registerSingular('minute', $min);
     }
@@ -44,7 +44,7 @@ trait HasSingleRecurrence
      * @param int $hours How many hours before performing a task.
      * @return CronTask
      */
-    public function runOnceInHours($hours): CronTask
+    public function runOnceInHours(int $hours): CronTask
     {
         return $this->registerSingular('hour', $hours);
     }
@@ -56,7 +56,7 @@ trait HasSingleRecurrence
      *
      * @return CronTask
      */
-    public function runOnceInDays($days): CronTask
+    public function runOnceInDays(int $days): CronTask
     {
         return $this->registerSingular('day', $days);
     }
@@ -68,7 +68,7 @@ trait HasSingleRecurrence
      *
      * @return CronTask
      */
-    public function runOnceInWeeks($weeks): CronTask
+    public function runOnceInWeeks(int $weeks): CronTask
     {
         return $this->registerSingular('week', $weeks);
     }
@@ -80,7 +80,7 @@ trait HasSingleRecurrence
      *
      * @return CronTask
      */
-    public function runOnceInMonths($months): CronTask
+    public function runOnceInMonths(int $months): CronTask
     {
         return $this->registerSingular('month', $months);
     }
@@ -92,7 +92,7 @@ trait HasSingleRecurrence
      *
      * @return CronTask
      */
-    public function runOnceInQuarters($quarters): CronTask
+    public function runOnceInQuarters(int $quarters): CronTask
     {
         return $this->registerSingular('quarter', $quarters);
     }
