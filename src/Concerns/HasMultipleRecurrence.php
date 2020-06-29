@@ -7,28 +7,6 @@ use Rumur\WordPress\Scheduling\CronTask;
 trait HasMultipleRecurrence
 {
     /**
-     * Adds a recurrent Task to a system queue.
-     *
-     * @param string $interval Available type of scheduling
-     * @param int|null $timestamp The calculated $timestamp or by default it is `now`
-     *
-     * @return CronTask
-     */
-    public function registerRecurrence(string $interval, ?int $timestamp = null): CronTask
-    {
-        if ($this->interval->has($interval) && $this->registry->isRecurrenceNotRegistered($this->task)) {
-            $this->registry->scheduleRecurrence($this->task, $timestamp ?: $this->interval->now(), $interval);
-        }
-
-        // Adds a hook name for a task if was registered with.
-        if (! $this->task->name()) {
-            $this->task->useName($this->registry->recurrentActionName());
-        }
-
-        return $this->resolveTask();
-    }
-
-    /**
      * Run the task every minute
      *
      * @return CronTask

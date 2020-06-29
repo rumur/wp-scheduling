@@ -7,32 +7,6 @@ use Rumur\WordPress\Scheduling\CronTask;
 trait HasSingleRecurrence
 {
     /**
-     * Adds a Task to a system queue that will be run one time only.
-     *
-     * @param string $interval Available type of scheduling
-     * @param int $extraTime The extra time that need to be adjusted.
-     * @param int|null $timestamp The calculated $timestamp
-     *
-     * @return CronTask
-     */
-    public function registerSingular(string $interval, int $extraTime = 1, ?int $timestamp = null): CronTask
-    {
-        if ($this->interval->has($interval) && $this->registry->isSingularNotRegistered($this->task)) {
-
-            $calculated = $timestamp ?: $this->interval->calculateFromNow($interval, $extraTime);
-
-            $this->registry->scheduleSingular($this->task, $calculated);
-        }
-
-        // Adds a hook name for a task if was registered with.
-        if (! $this->task->name()) {
-            $this->task->useName($this->registry->singularActionName());
-        }
-
-        return $this->resolveTask();
-    }
-
-    /**
      * Run a Task one time in minutes.
      *
      * @param int $min How many minutes before performing a task.
