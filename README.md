@@ -34,7 +34,8 @@ class HelloDolly
     {
         $this->lyrics = $lyrics;
     }
-
+    
+    // It can be an either `handle` or `__invoke` method
     public function handle($args)
     {
         $id = $args['id'];
@@ -47,7 +48,7 @@ class HelloDolly
 
 // You can add a class as a Job.
 \Rumur\WordPress\Scheduling\Schedule::job(
-    new App\Scheduling\HelloDolly('Lorem impsum')
+    new App\Scheduling\HelloDolly('Hello Rudy, well, hello Harry')
 )
 // You can add args for the task, all these args will be injected to the `handle` method 
 ->with([ 
@@ -82,6 +83,42 @@ class HelloDolly
 \Rumur\WordPress\Scheduling\Schedule::call(static function () {
     // Do something when the task is running.
 })->onSuccess(static function ($task, $args) {
+    // Do something when the task is run successfully.
+})->onFailure(static function ($task, $args, $reason) {
+    // Do something when the task is failed.
+})
+
+// You can add args for the task
+->with([ 'id' => 2020, /*...*/ ])
+
+// You can ping a url when the task is failed.
+->pingOnFailure('https://domain.com/?ping=true&id=3790a0e1-3f51-4703-8962-8ed889e2cc7c&action=failed')
+
+// You can ping a url when the task is successfully performed.
+->pingOnSuccess('https://domain.com/?ping=true&id=3790a0e1-3f51-4703-8962-8ed889e2cc7c&action=success')
+
+// Register the recurrence for a task and returns the configured task. 
+->runEveryThirtyMinutes();
+```
+
+### Task as a function.
+In order to set a task as function, you need to implement that function first and as far as the `Schedule::call` takes any `callable`
+instance you just call it.
+```php
+<?php
+// functions.php
+
+function my_own_task(array $args) {
+    // Do what you need to do.
+}
+```
+
+```php
+<?php
+// *.php
+
+// You can add a function as a Job.
+\Rumur\WordPress\Scheduling\Schedule::call('my_own_task')->onSuccess(static function ($task, $args) {
     // Do something when the task is run successfully.
 })->onFailure(static function ($task, $args, $reason) {
     // Do something when the task is failed.
@@ -165,6 +202,34 @@ add_action('init', static function() {
     // With this method the Scheduler will add intervals it uses.
     \Rumur\WordPress\Scheduling\Schedule::registerIntoWordPress();
 });
+```
+
+### How to set one task for more than one event?
+Every chained method returns a `PendingTask` instance and this task might be assigned for a several recurrence.
+
+```php
+<?php
+$pendingTask = \Rumur\WordPress\Scheduling\Schedule::job(
+    new App\Scheduling\HelloDolly('Hello Rudy, well, hello Harry')
+);
+
+$pendingTask->runOnceInWeek();
+$pendingTask->runEveryMinute();
+$pendingTask->runOnceInDays(33);
+$pendingTask->runOnceInWeeks(2);
+```
+
+### How to resign a job?
+```php
+<?php
+
+use Rumur\WordPress\Scheduling;
+
+$scheduledTask = Scheduling\Schedule::job(
+    new App\Scheduling\HelloDolly('Hello Rudy, well, hello Harry')
+)->runOnceInWeek();
+
+Scheduling\Schedule::resign($scheduledTask);
 ```
  
  ## License
