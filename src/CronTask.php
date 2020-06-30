@@ -19,7 +19,19 @@ class CronTask implements \Serializable
      *
      * @var mixed
      */
-    protected $task;
+    protected $performer;
+
+    /**
+     * @var string
+     */
+    protected $interval;
+
+    /**
+     * The ExtraTime Is used by a singular tasks.
+     *
+     * @var int
+     */
+    protected $extraTime;
 
     /**
      * The list of attributes that will be stored along with a task.
@@ -31,25 +43,92 @@ class CronTask implements \Serializable
     /**
      * CronTask constructor.
      *
-     * @param mixed $task
-     * @param array $args
-     * @param string $name
+     * @param mixed $performer The Task Performer
+     * @param array $args Args that will be passed to a performer
+     * @param string $name The WordPress action name that this task will be fire on.
+     * @param string $interval The WordPress Cron Interval this task is using.
+     * @param int|null $extraTime  The extra time for a singular task, for a recurrent task it's always `0`.
      */
-    public function __construct($task, array $args = [], ?string $name = null)
+    public function __construct(
+        $performer, array $args = [],
+        ?string $name = null, ?string $interval = null, int $extraTime = 0
+    )
     {
-        $this->task = $task;
         $this->args = $args;
         $this->name = $name;
+        $this->interval = $interval;
+        $this->extraTime = $extraTime;
+        $this->performer = $performer;
     }
 
     /**
-     * Gets the task performer instance.
+     * Gets args for the task.
      *
-     * @return mixed
+     * @return array
      */
-    public function task()
+    public function args(): array
     {
-        return $this->task;
+        return $this->args;
+    }
+
+    /**
+     * Sets args for a task.
+     *
+     * @param array $args
+     * @return static
+     */
+    public function useArgs(array $args)
+    {
+        $this->args = $args;
+
+        return $this;
+    }
+
+    /**
+     * Gets an extraTime the task is using.
+     *
+     * @return int
+     */
+    public function extraTime(): int
+    {
+        return $this->extraTime;
+    }
+
+    /**
+     * Sets an extraTime for the task.
+     *
+     * @param int $time
+     *
+     * @return static
+     */
+    public function useExtraTime(int $time)
+    {
+        $this->extraTime = $time;
+
+        return $this;
+    }
+
+    /**
+     * Gets interval the task is using.
+     *
+     * @return null|string
+     */
+    public function interval(): ?string
+    {
+        return $this->interval;
+    }
+
+    /**
+     * Sets the interval for the task.
+     *
+     * @param string $interval
+     * @return static
+     */
+    public function useInterval(string $interval)
+    {
+        $this->interval = $interval;
+
+        return $this;
     }
 
     /**
@@ -80,26 +159,29 @@ class CronTask implements \Serializable
     }
 
     /**
-     * Gets args for the task.
+     * Gets the task performer instance.
      *
-     * @return array
+     * @return mixed
      */
-    public function args(): array
+    public function performer()
     {
-        return $this->args;
+        return $this->performer;
     }
 
     /**
-     * Sets args for a task.
-     *
-     * @param array $args
-     * @return static
+     * @return array
      */
-    public function useArgs(array $args)
+    public function toArray(): array
     {
-        $this->args = $args;
-
-        return $this;
+        return [
+            'name' => $this->name,
+            'args' => $this->args,
+            'interval' => $this->interval,
+            'extraTime' => $this->extraTime,
+            'performer' => $this->performer,
+            'failedListeners' => $this->failedListeners,
+            'successListeners' => $this->successListeners,
+        ];
     }
 
     /**
@@ -110,13 +192,7 @@ class CronTask implements \Serializable
     public function serialize(): string
     {
         return \serialize(
-            (object)$this->prepareForSerialization([
-                'name' => $this->name,
-                'task' => $this->task,
-                'args' => $this->args,
-                'failedListeners' => $this->failedListeners,
-                'successListeners' => $this->successListeners,
-            ])
+            (object)$this->prepareForSerialization($this->toArray())
         );
     }
 
@@ -129,11 +205,12 @@ class CronTask implements \Serializable
     {
         $data = \unserialize($serialized);
 
-        $this->name = $this->prepareFromSerialization($data->name);
-        $this->task = $this->prepareFromSerialization($data->task);
-        $this->args = $this->prepareFromSerialization($data->args);
+        $properties = array_keys($this->toArray());
 
-        $this->failedListeners = $this->prepareFromSerialization($data->failedListeners);
-        $this->successListeners = $this->prepareFromSerialization($data->successListeners);
+        foreach ($properties as $property) {
+            if (property_exists($this, $property)) {
+                $this->{$property} = $this->prepareFromSerialization($data->{$property});
+            }
+        }
     }
 }
