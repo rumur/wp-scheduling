@@ -154,7 +154,7 @@ class WordPressRegistry
     /**
      * Resign all jobs for a provided hook.
      *
-     * @param string$hook
+     * @param string $hook
      *
      * @uses \wp_unschedule_hook
      *
