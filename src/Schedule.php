@@ -12,6 +12,8 @@ namespace Rumur\WordPress\Scheduling;
  * @method static WordPressRegistry registry()
  * @method static Scheduler resign(CronTask $task, ?string $name = null)
  * @method static Scheduler resignAll(string $name)
+ * @method static Scheduler resignAllSingular()
+ * @method static Scheduler resignAllRecurrent()
  * @method static Scheduler registerIntoWordPress(array|string[] $tasks = [])
  * @method static Scheduler registerIntervalsIntoWordPress()
  * @method static Scheduler addInterval(string $name, int|array $interval)
