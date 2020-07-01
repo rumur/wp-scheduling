@@ -81,10 +81,14 @@ class PendingTask
             $task->useName($this->registry->singularActionName());
         }
 
-        if ($this->interval->has($interval) && $this->registry->isNotRegistered($task)) {
+        if (! $timestamp && $this->interval->has($interval) && $this->registry->isNotRegistered($task)) {
             $this->registry->scheduleSingular($task,
-                $timestamp ?: $this->interval->calculateFromNow($interval, $extraTime)
+                $this->interval->calculateFromNow($interval, $extraTime)
             );
+        }
+
+        if ($timestamp && $this->registry->isNotRegistered($task)) {
+            $this->registry->scheduleSingular($task, $timestamp);
         }
 
         return $task;
