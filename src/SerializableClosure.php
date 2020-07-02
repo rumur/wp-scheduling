@@ -24,14 +24,14 @@ class SerializableClosure extends OpisSerializableClosure
         $scope = $object = null;
         $reflector = $this->getReflector();
 
-        if($reflector->isBindingRequired()){
+        if ($reflector->isBindingRequired()) {
             $object = $reflector->getClosureThis();
             static::wrapClosures($object, $this->scope);
-            if($scope = $reflector->getClosureScopeClass()){
+            if ($scope = $reflector->getClosureScopeClass()) {
                 $scope = $scope->name;
             }
         } else {
-            if($scope = $reflector->getClosureScopeClass()){
+            if ($scope = $reflector->getClosureScopeClass()) {
                 $scope = $scope->name;
             }
         }
