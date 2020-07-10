@@ -9,11 +9,12 @@ class Pinger
      *
      * @param string $url
      *
+     * @uses \WP_Http
      * @uses \is_wp_error
      * @uses \wp_remote_get
      * @uses \wp_remote_retrieve_response_code
      *
-     * @return bool
+     * @return bool     Returns `true` if got a response with a successful status.
      */
     public function ping(string $url): bool
     {
@@ -22,9 +23,11 @@ class Pinger
         );
 
         if (\is_wp_error($response)) {
-            error_log(static::class . ' failed the reason: ' . $response->get_error_message());
+            error_log(
+                static::class . " failed reach out the url `{$url}`, reason: " . $response->get_error_message()
+            );
         }
 
-        return $code >= \WP_Http::OK && $code <= \WP_Http::SEE_OTHER;
+        return $code >= \WP_Http::OK && $code < \WP_Http::MULTIPLE_CHOICES;
     }
 }

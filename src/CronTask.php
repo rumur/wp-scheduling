@@ -4,8 +4,8 @@ namespace Rumur\WordPress\Scheduling;
 
 class CronTask implements \Serializable
 {
-    use Concerns\HasStatusListeners,
-        Concerns\CanPrepareSerialization;
+    use Concerns\HasStatusListeners;
+    use Concerns\CanPrepareSerialization;
 
     /**
      * The Name of the task's hook.
@@ -50,10 +50,12 @@ class CronTask implements \Serializable
      * @param int|null $extraTime  The extra time for a singular task, for a recurrent task it's always `0`.
      */
     public function __construct(
-        $performer, array $args = [],
-        ?string $name = null, ?string $interval = null, int $extraTime = 0
-    )
-    {
+        $performer,
+        array $args = [],
+        ?string $name = null,
+        ?string $interval = null,
+        int $extraTime = 0
+    ) {
         $this->args = $args;
         $this->name = $name;
         $this->interval = $interval;

@@ -53,7 +53,7 @@ class Schedule
     {
         if (!static::$instance) {
             static::$instance = new static(
-                new Scheduler(new Intervals, new Dispatcher, new WordPressRegistry)
+                new Scheduler(new Intervals(), new Dispatcher(), new WordPressRegistry())
             );
         }
 

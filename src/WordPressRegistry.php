@@ -117,8 +117,12 @@ class WordPressRegistry
      */
     public function scheduleRecurrence(CronTask $task, int $timestamp, string $interval)
     {
-        \wp_schedule_event($timestamp, $interval,
-            $task->name() ?: $this->recurrentActionName(), [$task]);
+        \wp_schedule_event(
+            $timestamp,
+            $interval,
+            $task->name() ?: $this->recurrentActionName(),
+            [$task]
+        );
 
         return $this;
     }
@@ -134,12 +138,14 @@ class WordPressRegistry
      */
     public function resign(CronTask $task, ?string $hook = null)
     {
-        $isRegistered = $this->isRegistered($task,
+        $isRegistered = $this->isRegistered(
+            $task,
             $hookName = $hook ?: $task->name() ?: $this->singularActionName()
         );
         
         if (! $isRegistered) {
-            $isRegistered = $this->isRegistered($task,
+            $isRegistered = $this->isRegistered(
+                $task,
                 $hookName = $this->recurrentActionName()
             );
         }

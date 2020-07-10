@@ -4,8 +4,8 @@ namespace Rumur\WordPress\Scheduling;
 
 class PendingTask
 {
-    use Concerns\HasSingleRecurrence,
-        Concerns\HasMultipleRecurrence;
+    use Concerns\HasSingleRecurrence;
+    use Concerns\HasMultipleRecurrence;
 
     /** @var CronTask */
     protected $task;
@@ -28,10 +28,11 @@ class PendingTask
      * @param Dispatcher $dispatcher
      */
     public function __construct(
-        CronTask $task, Intervals $interval,
-        WordPressRegistry $registry, Dispatcher $dispatcher
-    )
-    {
+        CronTask $task,
+        Intervals $interval,
+        WordPressRegistry $registry,
+        Dispatcher $dispatcher
+    ) {
         $this->task = $task;
         $this->interval = $interval;
         $this->registry = $registry;
@@ -82,7 +83,8 @@ class PendingTask
         }
 
         if (! $timestamp && $this->interval->has($interval) && $this->registry->isNotRegistered($task)) {
-            $this->registry->scheduleSingular($task,
+            $this->registry->scheduleSingular(
+                $task,
                 $this->interval->calculateFromNow($interval, $extraTime)
             );
         }
@@ -164,12 +166,12 @@ class PendingTask
      */
     public function pingOnSuccess(string $successUrl)
     {
-        $this->onSuccess(static function() use ($successUrl) {
+        $this->onSuccess(static function () use ($successUrl) {
             // Needed to mention the whole namespace in order
             // to avoid an error, that class `Pinger` not found.
             // It happens due to serialization process.
             // The context of the class can be bound within serialization by adding a full namespace directly.
-            (new \Rumur\WordPress\Scheduling\Pinger)->ping($successUrl);
+            (new \Rumur\WordPress\Scheduling\Pinger())->ping($successUrl);
         });
 
         return $this;
@@ -184,12 +186,12 @@ class PendingTask
      */
     public function pingOnFailure(string $failureUrl)
     {
-        $this->onFailure(static function() use ($failureUrl) {
+        $this->onFailure(static function () use ($failureUrl) {
             // Needed to mention the whole namespace in order
             // to avoid an error, that class `Pinger` not found.
             // It happens due to serialization process.
             // The context of the class can be bound within serialization by adding a full namespace directly.
-            (new \Rumur\WordPress\Scheduling\Pinger)->ping($failureUrl);
+            (new \Rumur\WordPress\Scheduling\Pinger())->ping($failureUrl);
         });
 
         return $this;

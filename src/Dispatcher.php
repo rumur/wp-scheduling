@@ -90,15 +90,13 @@ class Dispatcher
         $should_proceed = true;
 
         foreach ($listeners as $listener) {
-
             // Stop of calling next listeners.
             if (false === $should_proceed) {
                 break;
             }
 
             if (is_string($listener) && class_exists($listener)) {
-
-                $l = new $listener;
+                $l = new $listener();
 
                 if (method_exists($l, 'handle')) {
                     $should_proceed = $l->handle($task, $args, ...$extra);

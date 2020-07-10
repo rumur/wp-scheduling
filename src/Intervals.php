@@ -62,7 +62,9 @@ class Intervals
     public function add(string $intervalName, $intervalTime)
     {
         if ($this->isRegistered) {
-            throw new \RuntimeException('An interval could only be added before Intervals have been registered into WordPress.');
+            throw new \RuntimeException(
+                'An interval could only be added before Intervals have been registered into WordPress.'
+            );
         }
 
         $this->additional[$intervalName] = $intervalTime;
@@ -120,7 +122,6 @@ class Intervals
         $available = MINUTE_IN_SECONDS;
 
         if ($this->has($intervalName)) {
-
             $available = $this->get($intervalName);
 
             $available = $available['interval'];
@@ -213,11 +214,13 @@ class Intervals
      */
     public function toWordPressArray(): array
     {
-        $recurrent = \apply_filters('rumur/scheduling/intervals/recurrent',
+        $recurrent = \apply_filters(
+            'rumur/scheduling/intervals/recurrent',
             $this->asWordPressInterval($this->recurrent, null, '-')
         );
 
-        $additional = \apply_filters('rumur/scheduling/intervals/additional',
+        $additional = \apply_filters(
+            'rumur/scheduling/intervals/additional',
             $this->asWordPressInterval($this->additional)
         );
 
@@ -251,7 +254,6 @@ class Intervals
         $prepared = [];
 
         foreach ($target as $name => $interval) {
-
             // It should be already ready for use.
             if (is_array($interval)) {
                 $prepared[$name] = $interval;
@@ -260,7 +262,6 @@ class Intervals
 
             // Try to detect the delimiter automatically
             if (! $delimiter) {
-
                 if (strpos($name, '_') !== false) {
                     $delimiter = '_';
                 } else {
@@ -276,7 +277,8 @@ class Intervals
 
             $prepared[$name] = [
                 'interval' => $interval,
-                'display' => implode(' ',
+                'display' => implode(
+                    ' ',
                     array_map('ucfirst', $pieces)
                 )
             ];
