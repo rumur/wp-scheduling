@@ -67,11 +67,16 @@ class PendingTask
      * @param string $interval Available type of scheduling
      * @param int $extraTime The extra time that need to be adjusted.
      * @param int|null $timestamp The calculated $timestamp
+     * @param bool $force Force to re-register task even if it exists.
      *
      * @return CronTask
      */
-    public function registerSingular(string $interval, int $extraTime = 1, ?int $timestamp = null): CronTask
-    {
+    public function registerSingular(
+        string $interval,
+        int $extraTime = 1,
+        ?int $timestamp = null,
+        bool $force = false
+    ): CronTask {
         $task = $this->resolveTask()->useInterval($interval);
 
         // In order to have one task, but several events
@@ -82,14 +87,19 @@ class PendingTask
             $task->useName($this->registry->singularActionName());
         }
 
-        if (! $timestamp && $this->interval->has($interval) && $this->registry->isNotRegistered($task)) {
-            $this->registry->scheduleSingular(
-                $task,
-                $this->interval->calculateFromNow($interval, $extraTime)
-            );
+        if (! $timestamp && $this->interval->has($interval)) {
+            $timestamp = $this->interval->calculateFromNow($interval, $extraTime);
         }
 
-        if ($timestamp && $this->registry->isNotRegistered($task)) {
+        if (! $timestamp) {
+            return $task;
+        }
+
+        if ($force && $this->registry->isRegistered($task)) {
+            $this->registry->resign($task);
+        }
+
+        if ($this->registry->isNotRegistered($task)) {
             $this->registry->scheduleSingular($task, $timestamp);
         }
 
@@ -101,10 +111,10 @@ class PendingTask
      *
      * @param string $interval Available type of scheduling
      * @param int|null $timestamp The calculated $timestamp or by default it is `now`
-     *
+     * @param bool $force Force to re-register task even if it exists.
      * @return CronTask
      */
-    public function registerRecurrence(string $interval, ?int $timestamp = null): CronTask
+    public function registerRecurrence(string $interval, ?int $timestamp = null, bool $force = false): CronTask
     {
         $task = $this->resolveTask()->useInterval($interval);
 
@@ -112,8 +122,20 @@ class PendingTask
             $task->useName($this->registry->recurrentActionName());
         }
 
-        if ($this->interval->has($interval) && $this->registry->isNotRegistered($task)) {
-            $this->registry->scheduleRecurrence($task, $timestamp ?: $this->interval->now(), $interval);
+        if (! $this->interval->has($interval)) {
+            throw new \InvalidArgumentException("Wrong interval {$interval}");
+        }
+
+        if (! $timestamp) {
+            $timestamp = $this->interval->now();
+        }
+
+        if ($force && $this->registry->isRegistered($task)) {
+            $this->registry->resign($task);
+        }
+
+        if ($this->registry->isNotRegistered($task)) {
+            $this->registry->scheduleRecurrence($task, $timestamp, $interval);
         }
 
         return $task;
