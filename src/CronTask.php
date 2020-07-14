@@ -205,14 +205,18 @@ class CronTask implements \Serializable
      */
     public function unserialize($serialized): void
     {
-        $data = \unserialize($serialized);
+        try {
+            $data = \unserialize($serialized);
 
-        $properties = array_keys($this->toArray());
+            $properties = array_keys($this->toArray());
 
-        foreach ($properties as $property) {
-            if (property_exists($this, $property)) {
-                $this->{$property} = $this->prepareFromSerialization($data->{$property});
+            foreach ($properties as $property) {
+                if (property_exists($this, $property)) {
+                    $this->{$property} = $this->prepareFromSerialization($data->{$property});
+                }
             }
+        } catch (\Throwable $e) {
+            error_log(static::class . 'Failed to unserialize, reason ' . $e->getMessage());
         }
     }
 }
