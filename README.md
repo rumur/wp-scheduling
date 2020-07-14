@@ -2,7 +2,13 @@
 it's a package that provides a convenient way of working with a [WordPress Cron](https://developer.wordpress.org/plugins/cron/) functionality.
 
 ## Package Installation  
-```composer require rumur/wp-scheduling```  
+```composer require rumur/wp-scheduling```
+
+### Themosis 2.x
+```php console vendor:publish --provider='Rumur\WordPress\Scheduling\WordPressScheduleServiceProvider'```
+
+### Sage 10.x
+```wp acorn vendor:publish --provider='Rumur\WordPress\Scheduling\WordPressScheduleServiceProvider'```
 
 ### Minimum Requirements:
  - PHP: 7.2+
