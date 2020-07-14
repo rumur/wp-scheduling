@@ -18,7 +18,7 @@ namespace Rumur\WordPress\Scheduling;
  * @method static Scheduler registerIntervalsIntoWordPress()
  * @method static Scheduler addInterval(string $name, int|array $interval)
  * @method static PendingTask job(object $task)
- * @method static PendingTask call(callable $task, array $args = [], ?string $name = null)
+ * @method static PendingTask call(callable $task, array $args = [])
  */
 class Schedule
 {
