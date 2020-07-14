@@ -11,7 +11,7 @@ class WordPressRegistry
      *
      * @var string
      */
-    protected $singularName = 'rumur_scheduled_singular';
+    protected $singularName;
 
     /**
      * The name of a default multiple action name.
@@ -20,7 +20,21 @@ class WordPressRegistry
      *
      * @var string
      */
-    protected $recurrentName = 'rumur_scheduled_recurrence';
+    protected $recurrentName;
+
+    /**
+     * WordPressRegistry constructor.
+     *
+     * @param string $singularName
+     * @param string $recurrentName
+     */
+    public function __construct(
+        string $singularName = 'rumur_scheduled_singular',
+        string $recurrentName = 'rumur_scheduled_recurrence'
+    ) {
+        $this->singularName = $singularName;
+        $this->recurrentName = $recurrentName;
+    }
 
     /**
      * @return string
